@@ -1,46 +1,53 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using AdaTech.AdaShop.Domain.Models.Validators;
+using System;
 
 namespace AdaTech.AdaShop.Domain.Models.Order
 {
-    internal class Address
+    public class Address : ICepValidator
     {
-        private string rua;
-        private string bairro;
-        private string cidade;
-        private string estado;
-        private string cep;
-        private int numero;
-        private string completmento;
+        private readonly NumberValidator<string> numberValidator = new NumberValidator<string>();
 
-        public string Rua { get; set; }
-        public string Bairro { get; set; }
-        public string Cidade { get; set; }
-        public string Estado { get; set; }
-        public string Cep
+        private string _cep;
+        private string _number;
+        public string Street { get; private set; }
+        public string Number
         {
-            get { return cep; }
-            set
+            get { return _number; }
+            private set
             {
-                if(value.Length != 8) 
+                if (numberValidator.IsNumberValid(value, "Número"))
                 {
-                    throw new ArgumentException("Cep inválido");
-                }
-                else
-                {
-                    Cep = value;
+                    _number = value;
                 }
             }
         }
-        public int Numero { get; set; }
-        public string Complemento { get; set; }
 
+        public string Neighborhood { get; private set; }
+        public string Complement { get; private set; }
+        public string City { get; private set; }
+        public string State { get; private set; }
 
+        public string Cep
+        {
+            get { return _cep; }
+            private set
+            {
+                if (ICepValidator.IsCepValid(value))
+                {
+                    _cep = value;
+                }
+            }
+        }
 
-
+        public Address(string street, string number, string complement, string neighborhood, string city, string state, string cep)
+        {
+            Street = street;
+            Number = number;
+            Complement = complement;
+            Neighborhood = neighborhood;
+            City = city;
+            State = state;
+            Cep = cep;
+        }
     }
 }
